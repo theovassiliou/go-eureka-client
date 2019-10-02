@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
-	"strconv"
 	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Errors introduced by handling requests
@@ -39,9 +39,10 @@ type Instance struct {
 	Instance *InstanceInfo `xml:"instance" json:"instance"`
 }
 type Port struct {
-	Port    int  `xml:",chardata" json:"$"`
-	Enabled bool `xml:"enabled,attr" json:"@enabled"`
+	Port    string `xml:",chardata" json:"$"`
+	Enabled string `xml:"enabled,attr" json:"@enabled"`
 }
+
 type InstanceInfo struct {
 	HostName                      string          `xml:"hostName" json:"hostName"`
 	HomePageUrl                   string          `xml:"homePageUrl,omitempty" json:"homePageUrl,omitempty"`
@@ -104,7 +105,7 @@ func NewRawRequest(method, relativePath string, body []byte, cancel <-chan bool)
 	}
 }
 
-func NewInstanceInfo(hostName, app, ip string, port int, ttl uint, isSsl bool) *InstanceInfo {
+func NewInstanceInfo(hostName, app, ip string, port string, ttl uint, isSsl bool) *InstanceInfo {
 	dataCenterInfo := &DataCenterInfo{
 		Name:     "MyOwn",
 		Class:    "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
@@ -123,8 +124,8 @@ func NewInstanceInfo(hostName, app, ip string, port int, ttl uint, isSsl bool) *
 		Metadata:       nil,
 	}
 	stringPort := ""
-	if port != 80 && port != 443 {
-		stringPort = ":" + strconv.Itoa(port)
+	if port != "80" && port != "443" {
+		stringPort = ":" + port
 	}
 	var protocol string = "http"
 	if isSsl {
@@ -132,13 +133,13 @@ func NewInstanceInfo(hostName, app, ip string, port int, ttl uint, isSsl bool) *
 		instanceInfo.SecureVipAddress = protocol + "://" + hostName + stringPort
 		instanceInfo.SecurePort = &Port{
 			Port:    port,
-			Enabled: true,
+			Enabled: "true",
 		}
 	} else {
 		instanceInfo.VipAddress = protocol + "://" + hostName + stringPort
 		instanceInfo.Port = &Port{
 			Port:    port,
-			Enabled: true,
+			Enabled: "true",
 		}
 	}
 	instanceInfo.StatusPageUrl = protocol + "://" + hostName + stringPort + "/info"
