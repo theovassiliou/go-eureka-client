@@ -417,7 +417,7 @@ func DefaultCheckRetry(cluster *Cluster, numReqs int, lastResp http.Response,
 func ExpBackOffCheckRetry(cluster *Cluster, numReqs int, lastResp http.Response,
 	err error) error {
 
-	if numReqs >= 10 {
+	if numReqs >= 100 {
 		return newError(ErrCodeEurekaNotReachable,
 			"Tried to connect to each peer 10 times and failed", 0)
 	}
