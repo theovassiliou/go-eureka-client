@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -403,6 +404,30 @@ func DefaultCheckRetry(cluster *Cluster, numReqs int, lastResp http.Response,
 	if code == http.StatusInternalServerError {
 		time.Sleep(time.Millisecond * 200)
 
+	}
+
+	logrus.Warningf("bad response status code %d", code)
+	return nil
+}
+
+// ExpBackOffCheckRetry defines the retrying behaviour for bad HTTP requests
+// We are using this to handle simultanious starting of Eureka server and this client
+// Exponential Back-Off und 2560ms on EOF
+// At most 10 retries
+func ExpBackOffCheckRetry(cluster *Cluster, numReqs int, lastResp http.Response,
+	err error) error {
+
+	if numReqs >= 10 {
+		return newError(ErrCodeEurekaNotReachable,
+			"Tried to connect to each peer 10 times and failed", 0)
+	}
+
+	code := lastResp.StatusCode
+	if code == http.StatusInternalServerError {
+		time.Sleep(time.Millisecond * 200)
+	} else if code == 0 {
+		millis := math.Min(math.Exp2(float64(numReqs)), math.Exp2(6)) * 40
+		time.Sleep(time.Millisecond * time.Duration(millis))
 	}
 
 	logrus.Warningf("bad response status code %d", code)
