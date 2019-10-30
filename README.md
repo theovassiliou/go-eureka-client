@@ -7,7 +7,7 @@ Based on code from https://github.com/bryanstephens/go-eureka-client .
 
 ```go
 import (
-	"github.com/ArthurHlt/go-eureka-client/eureka"
+	"github.com/theovassiliou/go-eureka-client/eureka"
 )
 func main() {
 
