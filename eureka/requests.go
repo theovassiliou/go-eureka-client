@@ -73,6 +73,19 @@ type DataCenterInfo struct {
 	Metadata *DataCenterMetadata `xml:"metadata,omitempty" json:"metadata,omitempty"`
 }
 
+type Visitor interface {
+	VisitForApplication(Application)
+	VisitForInstance(InstanceInfo)
+}
+
+func (obj Application) Accept(v Visitor) {
+	v.VisitForApplication(obj)
+}
+
+func (obj InstanceInfo) Accept(v Visitor) {
+	v.VisitForInstance(obj)
+}
+
 type DataCenterMetadata struct {
 	AmiLaunchIndex   string `xml:"ami-launch-index,omitempty" json:"ami-launch-index,omitempty"`
 	LocalHostname    string `xml:"local-hostname,omitempty" json:"local-hostname,omitempty"`
