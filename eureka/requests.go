@@ -176,6 +176,11 @@ func (c *Client) getCancelable(endpoint string,
 	return resp, nil
 }
 
+// returns the http.Client that the eureka client is using
+func (c *Client) GetHttpClient() *http.Client {
+	return c.httpClient
+}
+
 // get issues a GET request
 func (c *Client) Get(endpoint string) (*RawResponse, error) {
 	return c.getCancelable(endpoint, nil)
