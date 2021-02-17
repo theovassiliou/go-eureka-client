@@ -12,7 +12,7 @@ func (c *Client) GetApplications() (*Applications, error) {
 	}
 	var applications *Applications = new(Applications)
 	err = xml.Unmarshal(response.Body, applications)
-	return applications, err
+	return applications, nil
 }
 
 func (c *Client) GetApplication(appId string) (*Application, error) {
@@ -23,8 +23,8 @@ func (c *Client) GetApplication(appId string) (*Application, error) {
 		return nil, err
 	}
 	var application *Application = new(Application)
-	err = xml.Unmarshal(response.Body, application)
-	return application, err
+	xml.Unmarshal(response.Body, application)
+	return application, nil
 }
 
 func (c *Client) GetInstance(appId, instanceId string) (*InstanceInfo, error) {
@@ -36,7 +36,7 @@ func (c *Client) GetInstance(appId, instanceId string) (*InstanceInfo, error) {
 	}
 	var instance *InstanceInfo = new(InstanceInfo)
 	err = xml.Unmarshal(response.Body, instance)
-	return instance, err
+	return instance, nil
 }
 
 func (c *Client) GetVIP(vipId string) (*Applications, error) {
@@ -48,7 +48,7 @@ func (c *Client) GetVIP(vipId string) (*Applications, error) {
 	}
 	var applications *Applications = new(Applications)
 	err = xml.Unmarshal(response.Body, applications)
-	return applications, err
+	return applications, nil
 }
 
 func (c *Client) GetSVIP(svipId string) (*Applications, error) {
@@ -60,5 +60,5 @@ func (c *Client) GetSVIP(svipId string) (*Applications, error) {
 	}
 	var applications *Applications = new(Applications)
 	err = xml.Unmarshal(response.Body, applications)
-	return applications, err
+	return applications, nil
 }
